@@ -1,9 +1,5 @@
-<!--
-  %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{How to use inaturalist data in R}
--->
 
-# `riNat`
+# `rinat`
 
 
 ## Quickstart guide
@@ -13,9 +9,17 @@
 R wrapper for iNaturalist APIs for accessing the observations. The Detailed documentation of API is available on [iNaturlaist website](http://www.inaturalist.org/pages/api+reference) and is part of our larger species occurence searching packages [SPOCC](http://github.com/ropensci/spocc)
 
 
-```{r,echo=FALSE,error=FALSE,warning=FALSE}
+## Install
+
+Install the development version using `install_github` within Hadley's [devtools](https://github.com/hadley/devtools) package.
+
+```{r, eval=FALSE}
+install.packages("devtools")
+require(devtools)
+
+install_github("rinat", "ropensci")
 library(rinat)
-library(ggplot2)
+
 ```
 
 
@@ -33,10 +37,17 @@ butterflies <- get_inat_obs(query="Monarch Butterfly")
 
 
 
+```{r load_lib,message=FALSE,warning=FALSE,echo=FALSE,cache=TRUE}
+library(rinat)
+library(ggplot2)
+
+```
 
 
 Another use for a fuzzy search is searching for a common name or habitat, e.g. searching for all observations that might happen in a vernal pool.  We can then see all the species names found.  
 ```{r}
+library(rinat)
+
 vp_obs <- get_inat_obs(query="vernal pool")
 head(vp_obs$Species.guess)
 ```
@@ -134,7 +145,10 @@ place_counts
 
 Basic maps can be created as well to quickly visualize search results.  Maps can either be plotted automatically `plot = TRUE` or simply return a ggplot2 object with `plot = FALSE`.  This works well with single species data, but more complicated plots are best made from scratch.
 
-```{r, fig.align='center',fig.height=5,fig.width=7,fig.path='inst/'}
+```{r map, fig.align='center',fig.height=5,fig.width=7,fig.path='../inst/'}
+library(rinat)
+library(ggplot2)
+
 ## Map salamanders in the genuse Ambystoma
 m_obs <- get_inat_obs(taxon="Ambystoma maculatum")
 
@@ -143,4 +157,4 @@ salamander_map <- inat_map(m_obs,plot=FALSE)
 salamander_map + borders("state") + theme_bw()
 
 ```
-                                                                                                                                                 
+
