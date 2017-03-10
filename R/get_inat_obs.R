@@ -1,12 +1,14 @@
 #' Download inaturalist data
+#' 
 #' @description Primary function to retrieve observations from iNaturalist, allows users to search 
 #' for data, or just filter results by a subset of what is offered by the API
 #' @param query Query string for a general search
 #' @param quality the quality grade to be used.  Must be either "casual" or "research"  If left 
 #' blank both will be returned.
-#' @param taxon Filter by iNat taxon name. Note that this will also select observations of 
+#' @param taxon_name Filter by iNat taxon name. Note that this will also select observations of 
 #' descendant taxa. Note that names are not unique, so if the name matches multiple taxa, no 
 #' observations may be returned.
+#' @param taxon_id Filter by iNat taxon ID. Note that this will also select observations of descendant taxa.
 #' @param geo flag for returning only results that are georeferenced, TRUE will exclude 
 #' non-georeferenced results, but they cannot be excluded.
 #' @param year return observations only in that year (can only be one year, not a range of years)
@@ -34,16 +36,16 @@
 #'   
 #'   ## Filter with by just taxon, allows higher order filtering, 
 #'   ## Here we can search for just stone flies (order plecoptera)
-#'   get_inat_obs(taxon="Plecoptera")
+#'   get_inat_obs(taxon_name="Plecoptera")
 #'   
 #'   ## get metadata (the number of results found on the server)
 #'   out <- get_inat_obs(query="Monarch Butterfly", meta=TRUE)
 #'   out$meta
 #' }
-#' @import httr plyr
+#' @import httr 
 #' @export
 
-get_inat_obs <- function(query=NULL,taxon = NULL,quality=NULL,geo=NULL,year=NULL,month=NULL,day=NULL,bounds=NULL,maxresults=100,meta=FALSE)
+get_inat_obs <- function(query=NULL,taxon_name = NULL,taxon_id = NULL,quality=NULL,geo=NULL,year=NULL,month=NULL,day=NULL,bounds=NULL,maxresults=100,meta=FALSE)
 {  
   
   ## Parsing and error-handling of input strings
@@ -60,9 +62,14 @@ get_inat_obs <- function(query=NULL,taxon = NULL,quality=NULL,geo=NULL,year=NULL
     search <- paste(search,"&quality_grade=",quality,sep="")
   }
   
-  if(!is.null(taxon)){
-    search <-  paste(search,"&taxon_name=",gsub(" ","+",taxon),sep="")
+  if(!is.null(taxon_name)){
+    search <-  paste(search,"&taxon_name=",gsub(" ","+",taxon_name),sep="")
   }
+  
+  if(!is.null(taxon_id)){
+    search <-  paste(search,"&taxon_id=",gsub(" ","+",taxon_id),sep="")
+  }
+  
   
   if(!is.null(geo) && geo){
     search <- paste(search,"&has[]=geo",sep="")
@@ -118,6 +125,8 @@ get_inat_obs <- function(query=NULL,taxon = NULL,quality=NULL,geo=NULL,year=NULL
   
   if(total_res == 0){
     stop("Your search returned zero results.  Either your species of interest has no records or you entered an invalid search")
+  } else if(total_res >= 200000) {
+    stop("Your search returned too many results, please consider breaking it up into smaller chunks by year or month")
   }
   
   page_query <- paste(search,"&per_page=200&page=1",sep="")
@@ -125,8 +134,9 @@ get_inat_obs <- function(query=NULL,taxon = NULL,quality=NULL,geo=NULL,year=NULL
   data <- inat_handle(data)
   data_out <- if(is.na(data)) NA else read.csv(textConnection(data), stringsAsFactors = FALSE)
   
+  if(total_res < maxresults) maxresults <- total_res
   if(maxresults > 200){
-    for(i in 2:ceiling(total_res/200)){
+    for(i in 2:ceiling(maxresults/200)){
       page_query <- paste(search,"&per_page=200&page=",i,sep="")
       data <-  GET(base_url,path = q_path, query = page_query)
       data <- inat_handle(data)
