@@ -1,3 +1,7 @@
+# rinat 0.1.7
+
+* Cater for a corner case in which a mismatch between a project's reported number of observations and the actual number of observations returned produced an error when merging data frames in `get_inat_obs_project()`
+
 # rinat 0.1.6
 
 * New maintainer: Stéphane Guillou (@stragu)
