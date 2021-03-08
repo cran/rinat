@@ -1,8 +1,8 @@
 Package: rinat
 Type: Package
 Title: Access 'iNaturalist' Data Through APIs
-Version: 0.1.7
-Date: 2021-02-19
+Version: 0.1.8
+Date: 2021-03-08
 Authors@R: c(
     person("Vijay", "Barve", role = "aut", email = "vijay.barve@gmail.com",
             comment = c(ORCID = "0000-0002-4852-2567")),
@@ -13,7 +13,7 @@ Authors@R: c(
     )
 Description: A programmatic interface to the API provided by the 'iNaturalist' website <https://www.inaturalist.org/> to download species occurrence data submitted by citizen scientists.
 License: MIT + file LICENSE
-Imports: httr, plyr, jsonlite, ggplot2, maps, sp
+Imports: httr, curl, plyr, jsonlite, ggplot2, maps, sp
 RoxygenNote: 7.1.1
 URL: https://docs.ropensci.org/rinat/ (website)
         https://github.com/ropensci/rinat (devel)
@@ -21,10 +21,10 @@ Suggests: knitr, rmarkdown, testthat, sf
 VignetteBuilder: knitr
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2021-02-19 13:55:43 UTC; stragu
+Packaged: 2021-03-08 02:56:36 UTC; stragu
 Author: Vijay Barve [aut] (<https://orcid.org/0000-0002-4852-2567>),
   Edmund Hart [aut],
   Stéphane Guillou [cre] (<https://orcid.org/0000-0001-8992-0951>)
 Maintainer: Stéphane Guillou <stephane.guillou@member.fsf.org>
 Repository: CRAN
-Date/Publication: 2021-02-19 14:20:02 UTC
+Date/Publication: 2021-03-08 14:02:07 UTC

@@ -1,29 +1,45 @@
 #' Download observations or info from a project
-#'@description retrieve observations from a particular iNaturalist project. This function can be used to get either observations or information from a project by project name or ID
-#'@param grpid Name of the group as an iNaturalist slug or group id
-#'@param type character Either "observations" or "info"  Observations returns all observations, and "info" returns project details similar to what you can find on a project webpage.
-#'@param raw logical TRUE or FALSE. If TRUE and searching for project info, returns the raw output of parsed JSON for that project. Otherwise just some basic information is returned as a list
-#'@details An iNaturalist slug is usually the project as single string with words separated by hyphens. For instance, the project "State Flowers of the United States" has a slug of "state-flowers-of-the-united-states-eol-collection".  This can be extracted from the URL for the project usually. The state flowers project has the following URL http://www.inaturalist.org/projects/state-flowers-of-the-united-states-eol-collection
+#' @description retrieve observations from a particular iNaturalist project. This function can be used to get either observations or information from a project by project name or ID
+#' @param grpid Name of the group as an iNaturalist slug or group id
+#' @param type character Either "observations" or "info"  Observations returns all observations, and "info" returns project details similar to what you can find on a project webpage.
+#' @param raw logical TRUE or FALSE. If TRUE and searching for project info, returns the raw output of parsed JSON for that project. Otherwise just some basic information is returned as a list
+#' @details An iNaturalist slug is usually the project as single string with words separated by hyphens. For instance, the project "State Flowers of the United States" has a slug of "state-flowers-of-the-united-states-eol-collection".  This can be extracted from the URL for the project usually. The state flowers project has the following URL http://www.inaturalist.org/projects/state-flowers-of-the-united-states-eol-collection
 #'
-#'@examples \dontrun{
+#' @examples \dontrun{
 #'  get_inat_obs_project(354, type = "observations")
 #'  get_inat_obs_project("crows-in-vermont", type="info",raw=FALSE)
 #'}
-#'@import httr jsonlite
-#'@export
+#' @import httr jsonlite
+#' @importFrom curl has_internet
+#' @export
 
-get_inat_obs_project <- function(grpid, type = c("observations", "info"), raw = FALSE){
-  argstring = switch(match.arg(type),
-                     observations = "obs",
-                     info = "info")
-  url <- paste0("http://www.inaturalist.org/projects/",grpid,".json")
+get_inat_obs_project <- function(grpid, type = c("observations", "info"), raw = FALSE) {
+  
+  # check Internet connection
+  if (!curl::has_internet()) {
+    message("No Internet connection.")
+    return(invisible(NULL))
+  }
+  
+  base_url <- "http://www.inaturalist.org/"
+  # check that iNat can be reached
+  if (httr::http_error(base_url)) { # TRUE: 400 or above
+    message("iNaturalist API is unavailable.")
+    return(invisible(NULL))
+  }
+  
+  argstring <- switch(match.arg(type),
+                      observations = "obs",
+                      info = "info")
+  
+  url <- paste0(base_url, "projects/", grpid, ".json")
   xx <- fromJSON(content(GET(url), as = "text"))
   recs <- xx$project_observations_count
 
   ### Error handling for empty projects
   dat <- NULL
   if(is.null(recs))(return(dat))
-  message(paste(recs," records\n"))
+  message(paste(recs,"records\n"))
 
   if(argstring == "info"){
     output <- list()
@@ -40,8 +56,7 @@ get_inat_obs_project <- function(grpid, type = c("observations", "info"), raw = 
       output[["raw"]] <- xx
     }
     return(output)
-  }
-  else if (argstring == "obs") {
+  } else if (argstring == "obs") {
     per_page <- 200
     if (recs %% per_page == 0) {
       loopval <- recs %/% per_page
@@ -51,31 +66,36 @@ get_inat_obs_project <- function(grpid, type = c("observations", "info"), raw = 
         "Number of observations in project greater than current API limit.\nReturning the first 10000.\n"
       )
       loopval <- 10000 / per_page
-    }
-    else {
+    } else {
       loopval <- (recs %/% per_page) + 1
     }
     obs_list <- vector("list", loopval)
     for (i in 1:loopval) {
       url1 <-
         paste0(
-          "http://www.inaturalist.org/observations/project/", grpid,
+          base_url, "observations/project/", grpid,
           ".json?page=", i,
           "&per_page=", per_page
         )
       if (i == 1) {
-        message(paste0("0-", per_page))
+        message(paste0("Getting records 0-", per_page))
       }
       if (i > 1) {
-        message(paste0("-", i * per_page))
+        message(paste0("Getting records up to ", i * per_page))
       }
       obs_list[[i]] <-
         fromJSON(content(GET(url1), as = "text"), flatten = TRUE)
-      # break if < 200 rows, in case of mismatch between info and reality
-      # (problem has been observed)
-      if (nrow(obs_list[[i]]) != 200) break
+    }
+    message("Done.\n")
+    # remove empty results, in case of mismatch between info and reality
+    # (problem has been observed)
+    if (length(obs_list[[loopval]]) == 0) {
+      obs_list[[i]] <- NULL
     }
     project_obs <- do.call("rbind.fill", obs_list)
+    if (recs != nrow(project_obs)) {
+      message("Note: mismatch between number of observations reported and returned by the API.")
+    }
     return(project_obs)
   }
 }

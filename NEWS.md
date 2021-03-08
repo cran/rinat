@@ -1,3 +1,10 @@
+# rinat 0.1.8
+
+* Properly cater for mismatch in project observation numbers to stay on CRAN (attempt in previous version did not cover all cases)
+* Improve console messages in `get_inat_obs_project()`
+* Skip tests that use the iNaturalist API on CRAN
+* Don't error when iNaturalist or Internet is not available, as per CRAN Repository Policies (#49)
+
 # rinat 0.1.7
 
 * Cater for a corner case in which a mismatch between a project's reported number of observations and the actual number of observations returned produced an error when merging data frames in `get_inat_obs_project()`
