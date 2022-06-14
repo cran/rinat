@@ -1,3 +1,15 @@
+# rinat 0.1.9
+
+## New features
+
+* New `annotation` argument in `get_inat_obs()` to filter by annotation, e.g. by life stage, sex or phenology. See the [available annotations](https://forum.inaturalist.org/t/how-to-use-inaturalists-search-urls-wiki-part-2-of-2/18792#heading--annotations). (#53)
+* New vignette demonstrating processing and visualising data for species distribution: `vignette("species-distribution")`
+
+## Others
+
+* Fix test that would error because of reaching the observation limit
+* Use .Rmd.orig technique to avoid issues when CRAN tests vignette code
+
 # rinat 0.1.8
 
 * Properly cater for mismatch in project observation numbers to stay on CRAN (attempt in previous version did not cover all cases)
