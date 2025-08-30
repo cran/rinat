@@ -1,3 +1,18 @@
+# rinat 0.1.10
+
+## New features
+
+* `get_inat_obs()` can now filter observations by photo licences with the new `photo_license` argument. For example, `get_inat_obs(taxon_name  = "Burhinus grallarius", photo_license = "CC-BY")` will only return observations with photos licensed under Creative Commons - Attribution. (Thank you @beausoleilmo)
+
+## Bug fixes
+
+* `get_inat_obs_project()` now removes all empty elements (not just the last one) when there is a mismatch between the number of observations reported and returned by the API (fixes #60)
+
+## Others
+
+* Update documentation to resolve "Rd \link{} targets missing package" NOTE from CRAN check
+* Use `linewidth` aesthetic instead of `size` to suppress ggplot2 warning (thank you @beausoleilmo)
+
 # rinat 0.1.9
 
 ## New features

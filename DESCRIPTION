@@ -1,8 +1,8 @@
 Package: rinat
 Type: Package
 Title: Access 'iNaturalist' Data Through APIs
-Version: 0.1.9
-Date: 2022-06-14
+Version: 0.1.10
+Date: 2025-08-31
 Authors@R: c(
     person("Vijay", "Barve", role = "aut", email = "vijay.barve@gmail.com",
             comment = c(ORCID = "0000-0002-4852-2567")),
@@ -14,7 +14,7 @@ Authors@R: c(
 Description: A programmatic interface to the API provided by the 'iNaturalist' website <https://www.inaturalist.org/> to download species occurrence data submitted by citizen scientists.
 License: MIT + file LICENSE
 Imports: httr, curl, plyr, jsonlite, ggplot2, maps, sp
-RoxygenNote: 7.2.0
+RoxygenNote: 7.3.2
 URL: https://docs.ropensci.org/rinat/ (website)
         https://github.com/ropensci/rinat (devel)
 Suggests: knitr, rmarkdown, testthat, sf, dplyr, lubridate, ggforce,
@@ -22,10 +22,10 @@ Suggests: knitr, rmarkdown, testthat, sf, dplyr, lubridate, ggforce,
 VignetteBuilder: knitr
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2022-06-14 05:50:51 UTC; stragu
-Author: Vijay Barve [aut] (<https://orcid.org/0000-0002-4852-2567>),
+Packaged: 2025-08-30 15:47:52 UTC; stragu
+Author: Vijay Barve [aut] (ORCID: <https://orcid.org/0000-0002-4852-2567>),
   Edmund Hart [aut],
-  Stéphane Guillou [cre] (<https://orcid.org/0000-0001-8992-0951>)
+  Stéphane Guillou [cre] (ORCID: <https://orcid.org/0000-0001-8992-0951>)
 Maintainer: Stéphane Guillou <stephane.guillou@member.fsf.org>
 Repository: CRAN
-Date/Publication: 2022-06-14 06:00:02 UTC
+Date/Publication: 2025-08-30 16:00:02 UTC
